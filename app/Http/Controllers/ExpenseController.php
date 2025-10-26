@@ -9,11 +9,34 @@ use Illuminate\Http\Request;
 class ExpenseController extends Controller
 {
 
-    public function index()
+    public function index(Request $request)
     {
-        $expenses = Expense::with('category')
-            ->where('user_id', auth()->id())
-            ->get();
+        $query = Expense::with('category')
+            ->where('user_id', auth()->id());
+
+        if ($request->has('category_id')) {
+            $query->where('category_id', $request->category_id);
+        }
+
+        if ($request->has('min_amount')) {
+            $query->where('amount', '>=', $request->min_amount);
+        }
+        if ($request->has('max_amount')) {
+            $query->where('amount', '<=', $request->max_amount);
+        }
+
+        if ($request->has('start_date')) {
+            $query->where('date', '>=', $request->start_date);
+        }
+        if ($request->has('end_date')) {
+            $query->where('date', '<=', $request->end_date);
+        }
+
+        if ($request->has('search')) {
+            $query->where('description', 'like', '%' . $request->search . '%');
+        }
+
+        $expenses = $query->get();
 
         return response()->json($expenses);
     }
@@ -33,6 +56,10 @@ class ExpenseController extends Controller
             'amount' => $request->amount,
             'date' => now()
         ]);
+
+        $user = auth()->user();
+        $user->balance -= $request->amount;
+        $user->save();
 
         $expense->load('category');
 

@@ -69,4 +69,11 @@ class AuthController extends Controller
             'message' => 'Successfully logged out'
         ], 200);
     }
+
+    public function balance()
+    {
+        return response()->json([
+            'balance' => auth()->user()->balance
+        ]);
+    }
 }
