@@ -26,12 +26,10 @@ class CategoryController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255|unique:categories,name',
-            'description' => 'nullable|string|max:500',
         ]);
 
         $category = Category::create([
             'name' => $request->name,
-            'description' => $request->description,
             'is_predefined' => false
         ]);
 
@@ -65,10 +63,9 @@ class CategoryController extends Controller
 
         $request->validate([
             'name' => 'required|string|max:255|unique:categories,name,' . $id,
-            'description' => 'nullable|string|max:500',
         ]);
 
-        $category->update($request->only(['name', 'description']));
+        $category->update($request->only(['name']));
 
         return response()->json([
             'success' => true,
@@ -85,13 +82,6 @@ class CategoryController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Cannot delete predefined categories'
-            ], 403);
-        }
-
-        if ($category->expenses()->count() > 0) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Cannot delete category with existing expenses'
             ], 403);
         }
 
