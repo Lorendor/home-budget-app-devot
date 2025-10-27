@@ -5,14 +5,46 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Income;
 
+/**
+ * @OA\Tag(
+ *     name="Income",
+ *     description="Income management endpoints"
+ * )
+ */
 class IncomeController extends Controller
 {
+    /**
+     * @OA\Get(
+     *     path="/api/incomes",
+     *     summary="Get user incomes",
+     *     tags={"Income"},
+     *     security={{"bearerAuth": {}}},
+     *     @OA\Response(response="200", description="Incomes retrieved successfully")
+     * )
+     */
     public function index()
     {
         $incomes = Income::where('user_id', auth()->id())->get();
         return response()->json($incomes);
     }
 
+    /**
+     * @OA\Post(
+     *     path="/api/incomes",
+     *     summary="Create new income",
+     *     tags={"Income"},
+     *     security={{"bearerAuth": {}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             @OA\Property(property="description", type="string"),
+     *             @OA\Property(property="amount", type="number"),
+     *             @OA\Property(property="source", type="string")
+     *         )
+     *     ),
+     *     @OA\Response(response="201", description="Income created successfully")
+     * )
+     */
     public function store(Request $request)
     {
         $request->validate([

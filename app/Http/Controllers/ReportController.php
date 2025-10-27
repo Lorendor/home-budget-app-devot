@@ -6,8 +6,23 @@ use App\Models\Expense;
 use App\Models\Income;
 use Carbon\Carbon;
 
+/**
+ * @OA\Tag(
+ *     name="Reports",
+ *     description="Data aggregation and reporting endpoints"
+ * )
+ */
 class ReportController extends Controller
 {
+    /**
+     * @OA\Get(
+     *     path="/api/reports/overview",
+     *     summary="Get financial overview",
+     *     tags={"Reports"},
+     *     security={{"bearerAuth": {}}},
+     *     @OA\Response(response="200", description="Overview retrieved successfully")
+     * )
+     */
     public function overview()
     {
         $user = auth()->user();
@@ -22,6 +37,15 @@ class ReportController extends Controller
         ]);
     }
 
+    /**
+     * @OA\Get(
+     *     path="/api/reports/monthly",
+     *     summary="Get monthly reports",
+     *     tags={"Reports"},
+     *     security={{"bearerAuth": {}}},
+     *     @OA\Response(response="200", description="Monthly reports retrieved successfully")
+     * )
+     */
     public function monthly()
     {
         $user = auth()->user();
@@ -42,6 +66,15 @@ class ReportController extends Controller
         ]);
     }
 
+    /**
+     * @OA\Get(
+     *     path="/api/reports/quarterly",
+     *     summary="Get quarterly reports",
+     *     tags={"Reports"},
+     *     security={{"bearerAuth": {}}},
+     *     @OA\Response(response="200", description="Quarterly reports retrieved successfully")
+     * )
+     */
     public function quarterly()
     {
         $user = auth()->user();
@@ -62,6 +95,15 @@ class ReportController extends Controller
         ]);
     }
 
+    /**
+     * @OA\Get(
+     *     path="/api/reports/yearly",
+     *     summary="Get yearly reports",
+     *     tags={"Reports"},
+     *     security={{"bearerAuth": {}}},
+     *     @OA\Response(response="200", description="Yearly reports retrieved successfully")
+     * )
+     */
     public function yearly()
     {
         $user = auth()->user();

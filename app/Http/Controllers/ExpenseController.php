@@ -6,8 +6,29 @@ use App\Models\Expense;
 use App\Models\Category;
 use Illuminate\Http\Request;
 
+/**
+ * @OA\Tag(
+ *     name="Expenses",
+ *     description="Expense management endpoints"
+ * )
+ */
 class ExpenseController extends Controller
 {
+    /**
+     * @OA\Get(
+     *     path="/api/expenses",
+     *     summary="Get user expenses with filtering",
+     *     tags={"Expenses"},
+     *     security={{"bearerAuth": {}}},
+     *     @OA\Parameter(name="category", in="query", description="Filter by category ID"),
+     *     @OA\Parameter(name="min_amount", in="query", description="Minimum amount"),
+     *     @OA\Parameter(name="max_amount", in="query", description="Maximum amount"),
+     *     @OA\Parameter(name="start_date", in="query", description="Start date (YYYY-MM-DD)"),
+     *     @OA\Parameter(name="end_date", in="query", description="End date (YYYY-MM-DD)"),
+     *     @OA\Parameter(name="search", in="query", description="Search in description"),
+     *     @OA\Response(response="200", description="Expenses retrieved successfully")
+     * )
+     */
     public function index(Request $request)
     {
         $query = Expense::with('category')
@@ -40,6 +61,23 @@ class ExpenseController extends Controller
         return response()->json($expenses);
     }
 
+    /**
+     * @OA\Post(
+     *     path="/api/expenses",
+     *     summary="Create a new expense",
+     *     tags={"Expenses"},
+     *     security={{"bearerAuth": {}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             @OA\Property(property="description", type="string"),
+     *             @OA\Property(property="amount", type="number"),
+     *             @OA\Property(property="categoryId", type="integer")
+     *         )
+     *     ),
+     *     @OA\Response(response="201", description="Expense created successfully")
+     * )
+     */
     public function store(Request $request)
     {
         $request->validate([
