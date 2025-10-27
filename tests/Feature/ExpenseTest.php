@@ -12,13 +12,29 @@ class ExpenseTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected $user;
+    protected $category;
+    protected $expense;
+    protected $token;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->user = User::factory()->create();
+        $this->category = Category::create(['name' => 'Test Category']);
+        $this->expense = Expense::create([
+            'user_id' => $this->user->id,
+            'category_id' => $this->category->id,
+            'description' => 'Test expense',
+            'amount' => 50.00
+        ]);
+        $this->token = $this->user->createToken('test-token')->plainTextToken;
+    }
+
     public function test_can_get_expenses(): void
     {
-        $user = User::factory()->create();
-        $token = $user->createToken('test-token')->plainTextToken;
-
         $response = $this->withHeaders([
-            'Authorization' => 'Bearer ' . $token
+            'Authorization' => 'Bearer ' . $this->token
         ])->getJson('/api/expenses');
 
         $response->assertStatus(200);
@@ -26,16 +42,12 @@ class ExpenseTest extends TestCase
 
     public function test_can_create_expense(): void
     {
-        $user = User::factory()->create();
-        $category = Category::create(['name' => 'Test Category']);
-        $token = $user->createToken('test-token')->plainTextToken;
-
         $response = $this->withHeaders([
-            'Authorization' => 'Bearer ' . $token
+            'Authorization' => 'Bearer ' . $this->token
         ])->postJson('/api/expenses', [
-            'description' => 'Test expense',
-            'amount' => 50.00,
-            'categoryId' => $category->id,
+            'description' => 'New expense',
+            'amount' => 75.00,
+            'categoryId' => $this->category->id,
         ]);
 
         $response->assertStatus(201);
@@ -43,22 +55,12 @@ class ExpenseTest extends TestCase
 
     public function test_can_update_expense(): void
     {
-        $user = User::factory()->create();
-        $category = Category::create(['name' => 'Test Category']);
-        $expense = Expense::create([
-            'user_id' => $user->id,
-            'category_id' => $category->id,
-            'description' => 'Test expense',
-            'amount' => 50.00
-        ]);
-        $token = $user->createToken('test-token')->plainTextToken;
-
         $response = $this->withHeaders([
-            'Authorization' => 'Bearer ' . $token
-        ])->putJson("/api/expenses/{$expense->id}", [
+            'Authorization' => 'Bearer ' . $this->token
+        ])->putJson("/api/expenses/{$this->expense->id}", [
             'description' => 'Updated expense',
             'amount' => 75.00,
-            'categoryId' => $category->id,
+            'categoryId' => $this->category->id,
         ]);
 
         $response->assertStatus(200);
@@ -66,19 +68,9 @@ class ExpenseTest extends TestCase
 
     public function test_can_delete_expense(): void
     {
-        $user = User::factory()->create();
-        $category = Category::create(['name' => 'Test Category']);
-        $expense = Expense::create([
-            'user_id' => $user->id,
-            'category_id' => $category->id,
-            'description' => 'Test expense',
-            'amount' => 50.00
-        ]);
-        $token = $user->createToken('test-token')->plainTextToken;
-
         $response = $this->withHeaders([
-            'Authorization' => 'Bearer ' . $token
-        ])->deleteJson("/api/expenses/{$expense->id}");
+            'Authorization' => 'Bearer ' . $this->token
+        ])->deleteJson("/api/expenses/{$this->expense->id}");
 
         $response->assertStatus(200);
     }

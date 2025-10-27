@@ -10,6 +10,14 @@ class CategoryTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected $category;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->category = Category::create(['name' => 'Test Category']);
+    }
+
     public function test_can_get_categories(): void
     {
         $response = $this->getJson('/api/categories');
@@ -20,7 +28,7 @@ class CategoryTest extends TestCase
     public function test_can_create_category(): void
     {
         $response = $this->postJson('/api/categories', [
-            'name' => 'Test Category',
+            'name' => 'New Category',
         ]);
 
         $response->assertStatus(201);
@@ -28,9 +36,7 @@ class CategoryTest extends TestCase
 
     public function test_can_update_category(): void
     {
-        $category = Category::create(['name' => 'Test Category']);
-
-        $response = $this->putJson("/api/categories/{$category->id}", [
+        $response = $this->putJson("/api/categories/{$this->category->id}", [
             'name' => 'Updated Category',
         ]);
 
@@ -39,9 +45,7 @@ class CategoryTest extends TestCase
 
     public function test_can_delete_category(): void
     {
-        $category = Category::create(['name' => 'Test Category']);
-
-        $response = $this->deleteJson("/api/categories/{$category->id}");
+        $response = $this->deleteJson("/api/categories/{$this->category->id}");
 
         $response->assertStatus(200);
     }
