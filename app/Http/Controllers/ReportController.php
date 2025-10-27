@@ -11,10 +11,10 @@ class ReportController extends Controller
     public function overview()
     {
         $user = auth()->user();
-        
+
         $totalIncome = Income::where('user_id', $user->id)->sum('amount');
         $totalExpenses = Expense::where('user_id', $user->id)->sum('amount');
-        
+
         return response()->json([
             'total_income' => $totalIncome,
             'total_expenses' => $totalExpenses,
@@ -25,15 +25,15 @@ class ReportController extends Controller
     public function monthly()
     {
         $user = auth()->user();
-        
+
         $income = Income::where('user_id', $user->id)
                     ->where('date', '>=', Carbon::now()->subDays(30))
                     ->sum('amount');
-                    
+
         $expenses = Expense::where('user_id', $user->id)
                       ->where('date', '>=', Carbon::now()->subDays(30))
                       ->sum('amount');
-        
+
         return response()->json([
             'period' => 'last_30_days',
             'income' => $income,
@@ -45,15 +45,15 @@ class ReportController extends Controller
     public function quarterly()
     {
         $user = auth()->user();
-        
+
         $income = Income::where('user_id', $user->id)
                     ->where('date', '>=', Carbon::now()->subMonths(3))
                     ->sum('amount');
-                    
+
         $expenses = Expense::where('user_id', $user->id)
                       ->where('date', '>=', Carbon::now()->subMonths(3))
                       ->sum('amount');
-        
+
         return response()->json([
             'period' => 'last_3_months',
             'income' => $income,
@@ -65,15 +65,15 @@ class ReportController extends Controller
     public function yearly()
     {
         $user = auth()->user();
-        
+
         $income = Income::where('user_id', $user->id)
                     ->where('date', '>=', Carbon::now()->subYear())
                     ->sum('amount');
-                    
+
         $expenses = Expense::where('user_id', $user->id)
                       ->where('date', '>=', Carbon::now()->subYear())
                       ->sum('amount');
-        
+
         return response()->json([
             'period' => 'last_12_months',
             'income' => $income,

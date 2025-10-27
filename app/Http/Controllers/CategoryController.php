@@ -9,13 +9,12 @@ use Illuminate\Validation\ValidationException;
 
 class CategoryController extends Controller
 {
-
     public function index(): JsonResponse
     {
         $categories = Category::orderBy('is_predefined', 'desc')
                              ->orderBy('name')
                              ->get();
-        
+
         return response()->json([
             'success' => true,
             'data' => $categories
@@ -43,7 +42,7 @@ class CategoryController extends Controller
     public function show(string $id): JsonResponse
     {
         $category = Category::findOrFail($id);
-        
+
         return response()->json([
             'success' => true,
             'data' => $category
@@ -53,7 +52,7 @@ class CategoryController extends Controller
     public function update(Request $request, string $id): JsonResponse
     {
         $category = Category::findOrFail($id);
-        
+
         if ($category->is_predefined) {
             return response()->json([
                 'success' => false,
@@ -77,7 +76,7 @@ class CategoryController extends Controller
     public function destroy(string $id): JsonResponse
     {
         $category = Category::findOrFail($id);
-        
+
         if ($category->is_predefined) {
             return response()->json([
                 'success' => false,

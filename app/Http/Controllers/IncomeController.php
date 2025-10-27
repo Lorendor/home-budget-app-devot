@@ -7,7 +7,6 @@ use App\Models\Income;
 
 class IncomeController extends Controller
 {
-
     public function index()
     {
         $incomes = Income::where('user_id', auth()->id())->get();
