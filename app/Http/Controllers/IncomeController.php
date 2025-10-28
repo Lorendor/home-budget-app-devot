@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Income;
 use App\Http\Requests\StoreIncomeRequest;
+use App\Traits\ApiResponse;
 
 /**
  * @OA\Tag(
@@ -14,6 +15,7 @@ use App\Http\Requests\StoreIncomeRequest;
  */
 class IncomeController extends Controller
 {
+    use ApiResponse;
     /**
      * @OA\Get(
      *     path="/api/incomes",
@@ -26,7 +28,7 @@ class IncomeController extends Controller
     public function index()
     {
         $incomes = Income::where('user_id', auth()->id())->get();
-        return response()->json($incomes);
+        return $this->successResponse($incomes, 'Incomes retrieved successfully');
     }
 
     /**
@@ -59,13 +61,13 @@ class IncomeController extends Controller
         $user->balance += $request->amount;
         $user->save();
 
-        return response()->json($income, 201);
+        return $this->successResponse($income, 'Income created successfully', 201);
     }
 
     public function show($id)
     {
         $income = Income::where('user_id', auth()->id())->findOrFail($id);
-        return response()->json($income);
+        return $this->successResponse($income, 'Income retrieved successfully');
     }
 
     public function update(Request $request, $id)
@@ -82,13 +84,13 @@ class IncomeController extends Controller
             'amount' => $request->amount ?? $income->amount
         ]);
 
-        return response()->json($income);
+        return $this->successResponse($income, 'Income updated successfully');
     }
 
     public function destroy($id)
     {
         $income = Income::where('user_id', auth()->id())->findOrFail($id);
         $income->delete();
-        return response()->json(['message' => 'Income deleted successfully']);
+        return $this->successResponse(null, 'Income deleted successfully');
     }
 }

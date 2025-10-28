@@ -38,6 +38,13 @@ class ExpenseTest extends TestCase
         ])->getJson('/api/expenses');
 
         $response->assertStatus(200);
+        $response->assertJsonStructure([
+            'success',
+            'message',
+            'data',
+            'status_code'
+        ]);
+        $response->assertJson(['success' => true]);
     }
 
     public function test_can_create_expense(): void
@@ -51,6 +58,13 @@ class ExpenseTest extends TestCase
         ]);
 
         $response->assertStatus(201);
+        $response->assertJsonStructure([
+            'success',
+            'message',
+            'data',
+            'status_code'
+        ]);
+        $response->assertJson(['success' => true]);
     }
 
     public function test_can_update_expense(): void
@@ -64,6 +78,13 @@ class ExpenseTest extends TestCase
         ]);
 
         $response->assertStatus(200);
+        $response->assertJsonStructure([
+            'success',
+            'message',
+            'data',
+            'status_code'
+        ]);
+        $response->assertJson(['success' => true]);
     }
 
     public function test_can_delete_expense(): void
@@ -73,5 +94,12 @@ class ExpenseTest extends TestCase
         ])->deleteJson("/api/expenses/{$this->expense->id}");
 
         $response->assertStatus(200);
+        $response->assertJsonStructure([
+            'success',
+            'message',
+            'data',
+            'status_code'
+        ]);
+        $response->assertJson(['success' => true]);
     }
 }

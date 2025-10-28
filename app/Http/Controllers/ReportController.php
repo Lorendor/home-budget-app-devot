@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Expense;
 use App\Models\Income;
+use App\Traits\ApiResponse;
 use Carbon\Carbon;
 
 /**
@@ -14,6 +15,7 @@ use Carbon\Carbon;
  */
 class ReportController extends Controller
 {
+    use ApiResponse;
     /**
      * @OA\Get(
      *     path="/api/reports/overview",
@@ -30,11 +32,11 @@ class ReportController extends Controller
         $totalIncome = Income::where('user_id', $user->id)->sum('amount');
         $totalExpenses = Expense::where('user_id', $user->id)->sum('amount');
 
-        return response()->json([
+        return $this->successResponse([
             'total_income' => $totalIncome,
             'total_expenses' => $totalExpenses,
             'current_balance' => $totalIncome - $totalExpenses
-        ]);
+        ], 'Overview report retrieved successfully');
     }
 
     /**
@@ -58,12 +60,12 @@ class ReportController extends Controller
                       ->where('date', '>=', Carbon::now()->subDays(30))
                       ->sum('amount');
 
-        return response()->json([
+        return $this->successResponse([
             'period' => 'last_30_days',
             'income' => $income,
             'expenses' => $expenses,
             'net' => $income - $expenses
-        ]);
+        ], 'Monthly report retrieved successfully');
     }
 
     /**
@@ -87,12 +89,12 @@ class ReportController extends Controller
                       ->where('date', '>=', Carbon::now()->subMonths(3))
                       ->sum('amount');
 
-        return response()->json([
+        return $this->successResponse([
             'period' => 'last_3_months',
             'income' => $income,
             'expenses' => $expenses,
             'net' => $income - $expenses
-        ]);
+        ], 'Quarterly report retrieved successfully');
     }
 
     /**
@@ -116,11 +118,11 @@ class ReportController extends Controller
                       ->where('date', '>=', Carbon::now()->subYear())
                       ->sum('amount');
 
-        return response()->json([
+        return $this->successResponse([
             'period' => 'last_12_months',
             'income' => $income,
             'expenses' => $expenses,
             'net' => $income - $expenses
-        ]);
+        ], 'Yearly report retrieved successfully');
     }
 }

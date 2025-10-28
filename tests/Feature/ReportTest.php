@@ -27,6 +27,13 @@ class ReportTest extends TestCase
         ])->getJson('/api/reports/overview');
 
         $response->assertStatus(200);
+        $response->assertJsonStructure([
+            'success',
+            'message',
+            'data',
+            'status_code'
+        ]);
+        $response->assertJson(['success' => true]);
     }
 
     public function test_can_get_monthly(): void
@@ -36,6 +43,13 @@ class ReportTest extends TestCase
         ])->getJson('/api/reports/monthly');
 
         $response->assertStatus(200);
+        $response->assertJsonStructure([
+            'success',
+            'message',
+            'data',
+            'status_code'
+        ]);
+        $response->assertJson(['success' => true]);
     }
 
     public function test_can_get_quarterly(): void
@@ -45,6 +59,13 @@ class ReportTest extends TestCase
         ])->getJson('/api/reports/quarterly');
 
         $response->assertStatus(200);
+        $response->assertJsonStructure([
+            'success',
+            'message',
+            'data',
+            'status_code'
+        ]);
+        $response->assertJson(['success' => true]);
     }
 
     public function test_can_get_yearly(): void
@@ -54,5 +75,12 @@ class ReportTest extends TestCase
         ])->getJson('/api/reports/yearly');
 
         $response->assertStatus(200);
+        $response->assertJsonStructure([
+            'success',
+            'message',
+            'data',
+            'status_code'
+        ]);
+        $response->assertJson(['success' => true]);
     }
 }

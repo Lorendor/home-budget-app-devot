@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Expense;
 use App\Models\Category;
 use App\Http\Requests\StoreExpenseRequest;
+use App\Traits\ApiResponse;
 use Illuminate\Http\Request;
 
 /**
@@ -15,6 +16,7 @@ use Illuminate\Http\Request;
  */
 class ExpenseController extends Controller
 {
+    use ApiResponse;
     /**
      * @OA\Get(
      *     path="/api/expenses",
@@ -59,7 +61,7 @@ class ExpenseController extends Controller
 
         $expenses = $query->get();
 
-        return response()->json($expenses);
+        return $this->successResponse($expenses, 'Expenses retrieved successfully');
     }
 
     /**
@@ -95,7 +97,7 @@ class ExpenseController extends Controller
 
         $expense->load('category');
 
-        return response()->json($expense, 201);
+        return $this->successResponse($expense, 'Expense created successfully', 201);
     }
 
     public function show($id)
@@ -104,7 +106,7 @@ class ExpenseController extends Controller
             ->where('user_id', auth()->id())
             ->findOrFail($id);
 
-        return response()->json($expense);
+        return $this->successResponse($expense, 'Expense retrieved successfully');
     }
 
     public function update(Request $request, $id)
@@ -125,7 +127,7 @@ class ExpenseController extends Controller
 
         $expense->load('category');
 
-        return response()->json($expense);
+        return $this->successResponse($expense, 'Expense updated successfully');
     }
 
     public function destroy($id)
@@ -133,6 +135,6 @@ class ExpenseController extends Controller
         $expense = Expense::where('user_id', auth()->id())->findOrFail($id);
         $expense->delete();
 
-        return response()->json(['message' => 'Expense deleted successfully']);
+        return $this->successResponse(null, 'Expense deleted successfully');
     }
 }

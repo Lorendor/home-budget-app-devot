@@ -20,6 +20,16 @@ class AuthTest extends TestCase
         ]);
 
         $response->assertStatus(201);
+        $response->assertJsonStructure([
+            'success',
+            'message',
+            'data' => [
+                'user',
+                'access_token'
+            ],
+            'status_code'
+        ]);
+        $response->assertJson(['success' => true]);
     }
 
     public function test_can_login_user(): void
@@ -35,6 +45,16 @@ class AuthTest extends TestCase
         ]);
 
         $response->assertStatus(200);
+        $response->assertJsonStructure([
+            'success',
+            'message',
+            'data' => [
+                'user',
+                'access_token'
+            ],
+            'status_code'
+        ]);
+        $response->assertJson(['success' => true]);
     }
 
     public function test_can_logout_user(): void
@@ -47,6 +67,13 @@ class AuthTest extends TestCase
         ])->postJson('/api/logout');
 
         $response->assertStatus(200);
+        $response->assertJsonStructure([
+            'success',
+            'message',
+            'data',
+            'status_code'
+        ]);
+        $response->assertJson(['success' => true]);
     }
 
     public function test_can_get_balance(): void
@@ -59,5 +86,12 @@ class AuthTest extends TestCase
         ])->getJson('/api/balance');
 
         $response->assertStatus(200);
+        $response->assertJsonStructure([
+            'success',
+            'message',
+            'data',
+            'status_code'
+        ]);
+        $response->assertJson(['success' => true]);
     }
 }

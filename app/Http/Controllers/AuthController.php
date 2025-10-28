@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Traits\ApiResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use App\Models\User;
@@ -30,6 +31,7 @@ use Carbon\Carbon;
  */
 class AuthController extends Controller
 {
+    use ApiResponse;
     /**
      * @OA\Post(
      *     path="/api/register",
@@ -48,25 +50,29 @@ class AuthController extends Controller
      */
     public function register(Request $request): JsonResponse
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:8',
-        ]);
+        try {
+            $request->validate([
+                'name' => 'required|string|max:255',
+                'email' => 'required|string|email|max:255|unique:users',
+                'password' => 'required|string|min:8',
+            ]);
 
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'balance' => 1000.00
-        ]);
+            $user = User::create([
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+                'balance' => 1000.00
+            ]);
 
-        $token = $user->createToken('auth_token')->plainTextToken;
+            $token = $user->createToken('auth_token')->plainTextToken;
 
-        return response()->json([
-            'user' => $user,
-            'access_token' => $token,
-        ], 201);
+            return $this->successResponse([
+                'user' => $user,
+                'access_token' => $token,
+            ], 'User registered successfully', 201);
+        } catch (\Exception $e) {
+            return $this->errorResponse('Registration failed: ' . $e->getMessage(), 500);
+        }
     }
 
     /**
@@ -87,24 +93,26 @@ class AuthController extends Controller
      */
     public function login(Request $request): JsonResponse
     {
-        $request->validate([
-            'email' => 'required|email',
-            'password' => 'required',
-        ]);
+        try {
+            $request->validate([
+                'email' => 'required|email',
+                'password' => 'required',
+            ]);
 
-        if (Auth::attempt($request->only('email', 'password'))) {
-            $user = Auth::user();
-            $token = $user->createToken('auth_token')->plainTextToken;
+            if (Auth::attempt($request->only('email', 'password'))) {
+                $user = Auth::user();
+                $token = $user->createToken('auth_token')->plainTextToken;
 
-            return response()->json([
-                'user' => $user,
-                'access_token' => $token,
-            ], 200);
+                return $this->successResponse([
+                    'user' => $user,
+                    'access_token' => $token,
+                ], 'Login successful');
+            }
+
+            return $this->unauthorizedResponse('Invalid login credentials');
+        } catch (\Exception $e) {
+            return $this->errorResponse('Login failed: ' . $e->getMessage(), 500);
         }
-
-        return response()->json([
-            'error' => 'Invalid login credentials',
-        ], 401);
     }
 
     /**
@@ -120,9 +128,7 @@ class AuthController extends Controller
     {
         $request->user()->currentAccessToken()->delete();
 
-        return response()->json([
-            'message' => 'Successfully logged out'
-        ], 200);
+        return $this->successResponse(null, 'Successfully logged out');
     }
 
     /**
@@ -136,8 +142,6 @@ class AuthController extends Controller
      */
     public function balance(): JsonResponse
     {
-        return response()->json([
-            'balance' => auth()->user()->balance
-        ]);
+        return $this->successResponse(['balance' => auth()->user()->balance], 'Balance retrieved successfully');
     }
 }

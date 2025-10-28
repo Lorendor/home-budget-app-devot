@@ -34,6 +34,13 @@ class IncomeTest extends TestCase
         ])->getJson('/api/incomes');
 
         $response->assertStatus(200);
+        $response->assertJsonStructure([
+            'success',
+            'message',
+            'data',
+            'status_code'
+        ]);
+        $response->assertJson(['success' => true]);
     }
 
     public function test_can_create_income(): void
@@ -46,6 +53,13 @@ class IncomeTest extends TestCase
         ]);
 
         $response->assertStatus(201);
+        $response->assertJsonStructure([
+            'success',
+            'message',
+            'data',
+            'status_code'
+        ]);
+        $response->assertJson(['success' => true]);
     }
 
     public function test_can_update_income(): void
@@ -58,6 +72,13 @@ class IncomeTest extends TestCase
         ]);
 
         $response->assertStatus(200);
+        $response->assertJsonStructure([
+            'success',
+            'message',
+            'data',
+            'status_code'
+        ]);
+        $response->assertJson(['success' => true]);
     }
 
     public function test_can_delete_income(): void
@@ -67,5 +88,12 @@ class IncomeTest extends TestCase
         ])->deleteJson("/api/incomes/{$this->income->id}");
 
         $response->assertStatus(200);
+        $response->assertJsonStructure([
+            'success',
+            'message',
+            'data',
+            'status_code'
+        ]);
+        $response->assertJson(['success' => true]);
     }
 }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use App\Http\Requests\StoreCategoryRequest;
+use App\Traits\ApiResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Validation\ValidationException;
@@ -16,6 +17,7 @@ use Illuminate\Validation\ValidationException;
  */
 class CategoryController extends Controller
 {
+    use ApiResponse;
     /**
      * @OA\Get(
      *     path="/api/categories",
@@ -26,14 +28,15 @@ class CategoryController extends Controller
      */
     public function index(): JsonResponse
     {
-        $categories = Category::orderBy('is_predefined', 'desc')
-                             ->orderBy('name')
-                             ->get();
+        try {
+            $categories = Category::orderBy('is_predefined', 'desc')
+                                 ->orderBy('name')
+                                 ->get();
 
-        return response()->json([
-            'success' => true,
-            'data' => $categories
-        ]);
+            return $this->successResponse($categories, 'Categories retrieved successfully');
+        } catch (\Exception $e) {
+            return $this->errorResponse('Failed to retrieve categories: ' . $e->getMessage(), 500);
+        }
     }
 
     /**
@@ -57,21 +60,14 @@ class CategoryController extends Controller
             'is_predefined' => false
         ]);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Category created successfully',
-            'data' => $category
-        ], 201);
+        return $this->successResponse($category, 'Category created successfully', 201);
     }
 
     public function show(string $id): JsonResponse
     {
         $category = Category::findOrFail($id);
 
-        return response()->json([
-            'success' => true,
-            'data' => $category
-        ]);
+        return $this->successResponse($category, 'Category retrieved successfully');
     }
 
     /**
@@ -95,10 +91,7 @@ class CategoryController extends Controller
         $category = Category::findOrFail($id);
 
         if ($category->is_predefined) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Cannot edit predefined categories'
-            ], 403);
+            return $this->errorResponse('Cannot edit predefined categories', 403);
         }
 
         $request->validate([
@@ -107,11 +100,7 @@ class CategoryController extends Controller
 
         $category->update($request->only(['name']));
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Category updated successfully',
-            'data' => $category
-        ]);
+        return $this->successResponse($category, 'Category updated successfully');
     }
 
     /**
@@ -129,17 +118,11 @@ class CategoryController extends Controller
         $category = Category::findOrFail($id);
 
         if ($category->is_predefined) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Cannot delete predefined categories'
-            ], 403);
+            return $this->errorResponse('Cannot delete predefined categories', 403);
         }
 
         $category->delete();
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Category deleted successfully'
-        ]);
+        return $this->successResponse(null, 'Category deleted successfully');
     }
 }
