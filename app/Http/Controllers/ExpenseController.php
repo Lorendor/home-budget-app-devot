@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Expense;
 use App\Models\Category;
+use App\Http\Requests\StoreExpenseRequest;
 use Illuminate\Http\Request;
 
 /**
@@ -78,20 +79,14 @@ class ExpenseController extends Controller
      *     @OA\Response(response="201", description="Expense created successfully")
      * )
      */
-    public function store(Request $request)
+    public function store(StoreExpenseRequest $request)
     {
-        $request->validate([
-            'description' => 'required|string',
-            'amount' => 'required|numeric|min:0.01',
-            'categoryId' => 'required|exists:categories,id'
-        ]);
-
         $expense = Expense::create([
             'user_id' => auth()->id(),
             'category_id' => $request->categoryId,
             'description' => $request->description,
             'amount' => $request->amount,
-            'date' => now()
+            'date' => $request->date ?? now()
         ]);
 
         $user = auth()->user();

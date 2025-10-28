@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Income;
+use App\Http\Requests\StoreIncomeRequest;
 
 /**
  * @OA\Tag(
@@ -45,18 +46,13 @@ class IncomeController extends Controller
      *     @OA\Response(response="201", description="Income created successfully")
      * )
      */
-    public function store(Request $request)
+    public function store(StoreIncomeRequest $request)
     {
-        $request->validate([
-            'description' => 'required|string',
-            'amount' => 'required|numeric|min:0.01'
-        ]);
-
         $income = Income::create([
             'user_id' => auth()->id(),
             'description' => $request->description,
             'amount' => $request->amount,
-            'date' => now()
+            'date' => $request->date ?? now()
         ]);
 
         $user = auth()->user();

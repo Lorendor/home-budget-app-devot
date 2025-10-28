@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
+use App\Http\Requests\StoreCategoryRequest;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Validation\ValidationException;
@@ -49,12 +50,8 @@ class CategoryController extends Controller
      *     @OA\Response(response="201", description="Category created successfully")
      * )
      */
-    public function store(Request $request): JsonResponse
+    public function store(StoreCategoryRequest $request): JsonResponse
     {
-        $request->validate([
-            'name' => 'required|string|max:255|unique:categories,name',
-        ]);
-
         $category = Category::create([
             'name' => $request->name,
             'is_predefined' => false
