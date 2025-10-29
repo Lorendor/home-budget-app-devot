@@ -1,61 +1,272 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Home Budget API
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A personal budget management REST API built with Laravel 11. This project was created as a backend solution for tracking income, expenses, and generating financial reports.
 
-## About Laravel
+## What This API Does
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+This API helps users manage their personal finances by providing:
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- **User authentication** with secure token-based login
+- **Income and expense tracking** with automatic balance updates
+- **Category management** for organizing spending
+- **Financial reporting** with monthly, quarterly, and yearly summaries
+- **Advanced filtering** to find specific transactions
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Key Features
 
-## Learning Laravel
+### Authentication & Security
+- User registration and login using Laravel Sanctum
+- API token authentication for secure access
+- Rate limiting to prevent abuse (60 requests/minute)
+- Security headers for protection against common attacks
+- Input validation to ensure data integrity
+- CORS configuration for frontend applications
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### Financial Management
+- Track income from various sources
+- Record expenses with category classification
+- Predefined categories like Food, Transport, Housing, etc.
+- Automatic balance calculations
+- Starting balance of $1000 for new users
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+### Reporting & Analytics
+- Overview of total income, expenses, and current balance
+- Time-based reports (last 30 days, 3 months, 12 months)
+- Filter expenses by category, amount range, date, or search terms
+- Financial insights and data aggregation
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### Technical Implementation
+- RESTful API design with consistent JSON responses
+- Complete API documentation using Swagger/OpenAPI
+- Database migrations with proper relationships
+- Comprehensive testing with 20+ test cases
+- Code quality tools (PHPStan, PHPCS)
+- Consistent error handling across all endpoints
 
-## Laravel Sponsors
+## Getting Started
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+### Requirements
+- PHP 8.2 or higher
+- Composer
+- SQLite (included) or MySQL/PostgreSQL
 
-### Premium Partners
+### Installation Steps
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/yourusername/home-budget-api.git
+   cd home-budget-api
+   ```
 
-## Contributing
+2. **Install PHP dependencies**
+   ```bash
+   composer install
+   ```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+3. **Set up environment**
+   ```bash
+   cp .env.example .env
+   php artisan key:generate
+   ```
 
-## Code of Conduct
+4. **Set up database**
+   ```bash
+   php artisan migrate
+   php artisan db:seed
+   ```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+5. **Start the development server**
+   ```bash
+   php artisan serve
+   ```
 
-## Security Vulnerabilities
+6. **Access the API**
+   - API Base URL: `http://localhost:8000/api`
+   - Interactive Documentation: `http://localhost:8000/api/documentation`
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## API Endpoints
 
-## License
+### Authentication
+- `POST /api/register` - Create a new user account
+- `POST /api/login` - Login and get access token
+- `POST /api/logout` - Logout and invalidate token
+- `GET /api/balance` - Get current user balance
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+### Categories
+- `GET /api/categories` - List all available categories
+- `POST /api/categories` - Create a new category
+- `GET /api/categories/{id}` - Get specific category details
+- `PUT /api/categories/{id}` - Update category information
+- `DELETE /api/categories/{id}` - Delete a category
+
+### Expenses
+- `GET /api/expenses` - List user expenses (supports filtering)
+- `POST /api/expenses` - Record a new expense
+- `GET /api/expenses/{id}` - Get specific expense details
+- `PUT /api/expenses/{id}` - Update expense information
+- `DELETE /api/expenses/{id}` - Delete an expense
+
+### Income
+- `GET /api/incomes` - List user income records
+- `POST /api/incomes` - Record new income
+- `GET /api/incomes/{id}` - Get specific income details
+- `PUT /api/incomes/{id}` - Update income information
+- `DELETE /api/incomes/{id}` - Delete an income record
+
+### Reports
+- `GET /api/reports/overview` - Get financial overview
+- `GET /api/reports/monthly` - Last 30 days summary
+- `GET /api/reports/quarterly` - Last 3 months summary
+- `GET /api/reports/yearly` - Last 12 months summary
+
+## Configuration
+
+### Environment Variables
+
+The main configuration options:
+
+```env
+# Application settings
+APP_NAME="Home Budget API"
+APP_ENV=local
+APP_DEBUG=true
+APP_URL=http://localhost:8000
+
+# Database (SQLite by default)
+DB_CONNECTION=sqlite
+
+# Cache (file-based for development)
+CACHE_STORE=file
+```
+
+### Database Options
+
+The API works with different database systems:
+- **SQLite** - Default for development (no setup required)
+- **MySQL** - For production environments
+- **PostgreSQL** - Alternative production option
+
+## Testing
+
+Run the test suite to verify everything works:
+
+```bash
+# Run all tests
+php artisan test
+
+# Run specific test groups
+php artisan test --filter AuthTest
+php artisan test --filter ExpenseTest
+```
+
+The test suite includes:
+- Authentication flow testing
+- CRUD operations for all resources
+- Report generation testing
+- Error handling verification
+
+## Code Quality
+
+This project follows Laravel best practices and maintains high code quality:
+
+```bash
+# Static analysis
+composer phpstan
+
+# Code style checking
+composer phpcs
+
+# Auto-fix style issues
+composer phpcs-fix
+```
+
+## API Response Format
+
+All API responses follow a consistent structure:
+
+### Successful Response
+```json
+{
+  "success": true,
+  "message": "Operation completed successfully",
+  "data": { /* actual response data */ },
+  "status_code": 200
+}
+```
+
+### Error Response
+```json
+{
+  "success": false,
+  "message": "Error description",
+  "errors": [ /* validation errors if any */ ],
+  "status_code": 400
+}
+```
+
+## Security Features
+
+The API includes several security measures:
+- **Rate limiting** prevents API abuse
+- **Security headers** protect against common web vulnerabilities
+- **Input validation** ensures data integrity
+- **Token-based authentication** for secure access
+- **CORS configuration** for controlled cross-origin access
+
+## Project Structure
+
+```
+app/
+├── Http/
+│   ├── Controllers/     # API endpoint handlers
+│   ├── Middleware/      # Security and CORS middleware
+│   └── Requests/        # Input validation classes
+├── Models/              # Database models
+├── Exceptions/          # Custom exception handling
+└── Traits/              # Reusable code components
+
+database/
+├── migrations/          # Database schema definitions
+└── seeders/            # Sample data for development
+
+tests/
+└── Feature/            # API endpoint tests
+```
+
+## Deployment Considerations
+
+For production deployment, consider:
+- Set `APP_ENV=production` and `APP_DEBUG=false`
+- Use a production database (MySQL/PostgreSQL)
+- Configure Redis for caching
+- Set up proper CORS origins
+- Enable SSL/TLS
+- Configure logging and monitoring
+
+## How to Use Swagger Documentation
+
+Swagger provides an interactive interface to test the API without writing code. Here's how to use it:
+
+### Accessing Swagger
+1. Start the server: `php artisan serve`
+2. Open your browser and go to: `http://localhost:8000/api/documentation`
+3. You'll see a page with all available API endpoints
+
+### Tips for Using Swagger
+- **Green responses** (200, 201) mean success
+- **Red responses** (400, 401, 404) mean errors
+- **Always check the response body** for data or error messages
+- **Use the "Authorize" button** for protected endpoints
+- **Try different parameter combinations** to test filtering
+
+## Development Notes
+
+This project was built to demonstrate:
+- RESTful API design principles
+- Laravel framework capabilities
+- Security best practices
+- Testing methodologies
+- Code quality standards
+- API documentation
+
+The codebase follows Laravel conventions and includes comprehensive error handling, making it suitable for both learning and production use.
